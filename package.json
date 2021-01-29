@@ -1,7 +1,7 @@
 {
   "name": "mikro-orm-mssql",
-  "version": "0.0.1",
-  "description": "MSSql driver for Mikro-orm",
+  "version": "1.0.1",
+  "description": "MSSql driver for Mikro-orm v4",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +21,6 @@
   },
   "homepage": "https://github.com/UTGuy/mikro-orm-mssql#readme",
   "dependencies": {
-    "mikro-orm": "^3.6.15"
+    "mikro-orm": "^4.4.0"
   }
 }
