@@ -1,6 +1,6 @@
 {
   "name": "mikro-orm-mssql",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MSSql driver for Mikro-orm v4",
   "main": "index.js",
   "scripts": {
