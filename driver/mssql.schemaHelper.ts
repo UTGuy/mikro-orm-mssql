@@ -1,19 +1,21 @@
-import { SchemaHelper, EntityProperty, IsSame } from 'mikro-orm';
-import { Column } from 'mikro-orm/dist/schema/DatabaseTable';
+import { EntityProperty } from '@mikro-orm/core';
+import { SchemaHelper, IsSame, Column } from '@mikro-orm/knex';
 
 export class MsSqlSchemaHelper extends SchemaHelper {
     static readonly TYPES = {
-        number: ['integer', 'int', 'tinyint', 'smallint', 'bigint'],
-        tinyint: ['integer'],
-        smallint: ['integer'],
-        bigint: ['integer'],
-        boolean: ['integer', 'int', 'bit'],
-        bit: ['boolean'],
-        string: ['varchar', 'text'],
-        Date: ['datetime', 'text'],
-        date: ['datetime', 'text'],
-        object: ['text'],
+        boolean: ['tinyint(1)', 'tinyint'],
+        number: ['int(?)', 'int', 'float', 'double', 'tinyint', 'smallint'],
+        float: ['float'],
+        double: ['double'],
+        tinyint: ['tinyint'],
+        smallint: ['smallint'],
+        Date: ['datetime(?)', 'timestamp(?)', 'datetime', 'timestamp'],
+        date: ['datetime(?)', 'timestamp(?)', 'datetime', 'timestamp'],
+        string: ['varchar(?)', 'varchar', 'text', 'bigint', 'enum'],
         text: ['text'],
+        object: ['json'],
+        json: ['json'],
+        enum: ['enum'],
     };
 
     static readonly DEFAULT_TYPE_LENGTHS = {

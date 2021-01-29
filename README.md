@@ -1,5 +1,7 @@
 # mikro-orm-mssql
 
+This is a mssql driver for Mikro-orm v4
+
 ```
 import { MikroOrmModuleOptions } from 'nestjs-mikro-orm';
 import { MsSqlDatabaseDriver } from 'mikro-orm-mssql';

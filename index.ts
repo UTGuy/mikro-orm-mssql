@@ -1,1 +1,1 @@
-export * from './driver/mssql.driver';
+export * from './driver';
