@@ -1,4 +1,4 @@
-import { AbstractSqlConnection, MonkeyPatchable } from '@mikro-orm/knex';
+import { AbstractSqlConnection } from '@mikro-orm/knex';
 import dialect from 'knex/lib/dialects/mssql';
 
 export class MsSqlConnection extends AbstractSqlConnection {
@@ -19,11 +19,14 @@ export class MsSqlConnection extends AbstractSqlConnection {
       return res;
     }
 
-    const [result] = res;
+    const { rows } = res.toTable();
+    const [row] = rows;
 
     return {
-      insertId: result.insertId,
-      affectedRows: result[""],
+      insertId: (row?.length > 0) ? row[0] : null,
+      affectedRows: rows.length,
+      row,
+      rows
     } as unknown as T;
   }
 
@@ -38,11 +41,18 @@ export class MsSqlConnection extends AbstractSqlConnection {
       return processResponse(obj, runner);
     }
 
+    const patchInsertMany = (sql: string) => {
+      const [result] = Array.from(sql.matchAll(/^insert into (.*) values (.*) returning (.*)/));
+      if (!result)
+        return sql;
+      const [_, table, values, returns] = result;
+      const columns = returns.split(',').map(x => `inserted.${x.trim()}`).join(",");
+      return `insert into ${table} output ${columns} values ${values}`;
+    }
+
     const query = dialect.prototype._query;
     dialect.prototype._query = function (connection, obj) {
-      if (isInsert(obj)) {
-        obj.sql += "; SELECT SCOPE_IDENTITY() as insertId;";
-      }
+      obj.sql = patchInsertMany(obj.sql);
       return query(connection, obj);
     }
     return dialect;

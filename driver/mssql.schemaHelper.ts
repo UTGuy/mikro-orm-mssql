@@ -3,19 +3,21 @@ import { SchemaHelper, IsSame, Column } from '@mikro-orm/knex';
 
 export class MsSqlSchemaHelper extends SchemaHelper {
     static readonly TYPES = {
-        boolean: ['tinyint(1)', 'tinyint'],
-        number: ['int(?)', 'int', 'float', 'double', 'tinyint', 'smallint'],
-        float: ['float'],
-        double: ['double'],
-        tinyint: ['tinyint'],
-        smallint: ['smallint'],
-        Date: ['datetime(?)', 'timestamp(?)', 'datetime', 'timestamp'],
-        date: ['datetime(?)', 'timestamp(?)', 'datetime', 'timestamp'],
-        string: ['varchar(?)', 'varchar', 'text', 'bigint', 'enum'],
+        number: ['int', 'integer', 'tinyint', 'smallint', 'bigint'],
+        tinyint: ['int'],
+        smallint: ['int'],
+        float: ['float(24)'],
+        double: ['float(53)'],
+        bigint: ['bigint'],
+        boolean: ['bit'],
+        bit: ['bit'],
+        string: ['varchar(255)', 'text'],
+        Date: ['datetime', 'datetime2'],
+        date: ['datetime', 'datetime2'],
         text: ['text'],
-        object: ['json'],
-        json: ['json'],
-        enum: ['enum'],
+        object: ['text'],
+        json: ['text'],
+        uuid: ['uniqueidentifier'],
     };
 
     static readonly DEFAULT_TYPE_LENGTHS = {
@@ -27,6 +29,10 @@ export class MsSqlSchemaHelper extends SchemaHelper {
     static readonly DEFAULT_VALUES = {
         '0': ['0', 'false'],
     };
+
+    getDatabaseExistsSQL(name: string): string {
+        return `select 1 from master.sys.databases where name = N'${name}'`;
+    }
 
     getSchemaBeginning(): string {
         return 'pragma foreign_keys = off;\n\n';
