@@ -19,14 +19,17 @@ export class MsSqlConnection extends AbstractSqlConnection {
       return res;
     }
 
-    const { rows } = res.toTable();
-    const [row] = rows;
+    if (res == null) {
+      return {} as T;
+    }
+
+    const [insertId] = res.toTable().rows.map(([id]) => id);
 
     return {
-      insertId: (row?.length > 0) ? row[0] : null,
-      affectedRows: rows.length,
-      row,
-      rows
+      insertId,
+      affectedRows: res.length,
+      row: res[0],
+      rows: res
     } as unknown as T;
   }
 
