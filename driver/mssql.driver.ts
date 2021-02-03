@@ -14,8 +14,15 @@ export class MsSqlDatabaseDriver extends AbstractSqlDriver<MsSqlConnection> {
         const result = Object.entries(where).reduce((hash,[key, value]) => {
             if(key.indexOf(delimeter) > -1) {
                 const props = key.split(delimeter);
-                const [ids] = value["$in"];
-                props.forEach( (p,i) => hash[p] = ids[i] );
+                const records: any[] = value["$in"];
+                const $or = records.map( (values) => {
+                    const subHash = {};
+                    props.forEach((p,i) => {
+                        subHash[p] = values[i];
+                    })
+                    return subHash;
+                } );
+                hash["$or"] = $or;
             } else {
                 hash[key] = value;
             }
