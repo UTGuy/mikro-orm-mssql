@@ -14,6 +14,6 @@ export class MsSqlPlatform extends AbstractSqlPlatform {
     }
 
     usesReturningStatement(): boolean {
-        return true;
+        return false;
     }
 }
