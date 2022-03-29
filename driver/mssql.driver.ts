@@ -1,6 +1,6 @@
 import { Configuration, QueryResult, AnyEntity, FilterQuery } from "@mikro-orm/core";
 import { AbstractSqlDriver } from "@mikro-orm/knex";
-import { Transaction, Transaction as KnexTransaction } from "knex";
+import { Transaction, Transaction as KnexTransaction } from "@mikro-orm/knex/node_modules/knex";
 import { MsSqlConnection } from "./mssql.connection";
 import { MsSqlPlatform } from "./mssql.platform";
 
@@ -16,9 +16,10 @@ export class MsSqlDatabaseDriver extends AbstractSqlDriver<MsSqlConnection> {
                 const props = key.split(delimeter);
                 const records: any[] = value["$in"];
                 const $or = records.map((values) => {
+                    const isArray = Array.isArray(values);
                     const subHash = {};
                     props.forEach((p, i) => {
-                        subHash[p] = values[i];
+                        subHash[p] = isArray ? values[i] : values[p];
                     })
                     return subHash;
                 });

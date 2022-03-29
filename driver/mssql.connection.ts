@@ -1,6 +1,6 @@
 import { EntityMetadata, Transaction } from '@mikro-orm/core';
 import { AbstractSqlConnection } from '@mikro-orm/knex';
-import dialect from 'knex/lib/dialects/mssql';
+import dialect from '@mikro-orm/knex/node_modules/knex/lib/dialects/mssql';
 
 export class MsSqlConnection extends AbstractSqlConnection {
   async connect(): Promise<void> {
@@ -37,12 +37,12 @@ export class MsSqlConnection extends AbstractSqlConnection {
   private getPatchedDialect() {
     // const _processResponse = dialect.prototype.processResponse;
     // dialect.prototype.processResponse = function (obj, runner) {
-    //   return _processResponse(obj, runner);
+    //   return _processResponse.call(this, obj, runner);
     // }
 
     // const _query = dialect.prototype._query;
     // dialect.prototype._query = (connection, obj) => {
-    //   return _query(connection, obj);
+    //   return _query.call(this, connection, obj);
     // }
     return dialect;
   }
@@ -63,7 +63,7 @@ export class MsSqlConnection extends AbstractSqlConnection {
     if (!results)
       return sql;
 
-    const [_, table, columns, values] = results;
+    const [, table, columns, values] = results;
     const collection = table.replace(/\[|\]/gm, '');
     const { name: entityName } = Object.values(this.metadata.getAll()).find((meta: EntityMetadata) => meta.collection === collection);
     const metadata = this.metadata.get(entityName);
@@ -73,7 +73,7 @@ export class MsSqlConnection extends AbstractSqlConnection {
     const getPkColumnType = (pk: string) => getPk(pk).columnTypes[0];
     const output = metadata.primaryKeys.map(pk => `inserted.[${getPkFieldName(pk)}]`);
     const tableColumns = metadata.primaryKeys.map(pk => `${getPkFieldName(pk)} ${getPkColumnType(pk)}`).join(', ');
-    const selectColumns = metadata.primaryKeys.map(pk => `[${getPkFieldName(pk)}] as ${pk}`).join(", ");
+    const selectColumns = metadata.primaryKeys.map(pk => `[${getPkFieldName(pk)}] as ${getPkFieldName(pk)}, [${getPkFieldName(pk)}] as ${pk}`).join(", ");
 
     const declare = `declare @${entityName} table (${tableColumns})`;
     const insertInto = `insert into ${table} ${columns} output ${output} into @${entityName} values ${values}`;

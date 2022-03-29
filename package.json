@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/UTGuy/mikro-orm-mssql#readme",
   "dependencies": {
-    "mikro-orm": "^4.4.0",
+    "mikro-orm": "^4.5.9",
     "tsqlstring": "^1.0.1"
   },
   "devDependencies": {
